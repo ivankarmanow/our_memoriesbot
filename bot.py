@@ -258,7 +258,6 @@ async def take_letter_handler(msg: types.Message):
 
 @dp.callback_query_handler(Text(startswith="list"))
 async def take_more(clbck: types.CallbackQuery):
-    print("!!!")
     cur = conn.cursor()
     global num
     cur.execute("SELECT * FROM entries ORDER BY id DESC LIMIT 11 OFFSET %d;" % num)
@@ -285,17 +284,49 @@ async def congrat_yandler(msg: types.Message):
 @dp.message_handler(state=CongratState.wait_dt)
 async def congrat_date(msg: types.Message, state: FSMContext):
     try:
-        congrat_dt = dt.datetime.strptime(msg.text, "%d-%m-%Y %-H:%M")
-    except:
+        congrat_dt = dt.datetime.strptime(msg.text, "%d-%m-%Y %H:%M")
+    except Exception as e:
         await msg.answer("К сожалению введённая дата не подходит, скорее всего нерпавильный формат, попробуй снова")
+        print(e)
     else:
         await state.update_data(congrat_time=congrat_dt)
         await CongratState.wait_msg.set()
         await msg.answer("А теперь отправь текст поздавления")
 
+new_congr = True
+
 @dp.message_handler(state=CongratState.wait_msg)
 async def congrat_finish(msg: types.Message, state: FSMContext):
-    pass
+    async with state.proxy() as data:
+        congr_date = data['congrat_time']
+    if msg.from_user.id == (cp['Bot']['polina_id']):
+        to_id = cp['Bot']['me_id']
+    elif msg.from_user.id == int(cp['Bot']['me_id']):
+        to_id = cp['Bot']['polina_id']
+    cur = conn.cursor()
+    cur.execute("INSERT INTO congratulations (to_id, text, date) VALUES ('%s', '%s', '%s');" % (to_id, msg.text, congr_date))
+    cur.close()
+    conn.commit()
+    global new_congr
+    new_congr = True
+
+async def congratulate():
+    global new_congr
+    while True:
+        if new_congr:
+            cur = conn.cursor()
+            cur.execute("SELECT * FROM congratulations;")
+            res = cur.fetchall()
+            cur.close()
+            new_congr = False
+        for j in res:
+            if dt.datetime.now().replace(second=0, microsecond=0) == j[3]:
+                print("Hoorah!")
+                await bot.send_message(j[1], j[2])
+                cur = conn.cursor()
+                cur.execute("DELETE FROM congratulations WHERE id=%d" % j[0])
+                new_congr = True
+        await aio.sleep(10)
 
 async def notify():
     msg_text = "Загляни в записочки, кажется там есть кое-что для тебя 🙃"
@@ -326,7 +357,8 @@ async def scheduler():
         await aio.sleep(1)
         
 async def on_startup(dp): 
-    aio.create_task(scheduler())
+    aio.create_task(scheduler()) 
+    aio.create_task(congratulate())
 
 if __name__ == "__main__":
     executor.start_polling(dp, on_startup=on_startup)
