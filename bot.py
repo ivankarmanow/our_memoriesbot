@@ -214,7 +214,7 @@ async def cancel_send_handler(clbck: types.CallbackQuery, state: FSMContext):
 @dp.message_handler(state=SendLetterState.ltr_text)
 async def sending_letter(msg: types.Message, state: FSMContext):
     cur = conn.cursor()
-    cur.execute("INSERT INTO entries (username, msg) VALUES ('%s', '%s');" % (msg.from_user.full_name, msg.text))
+    cur.execute("INSERT INTO entries (username, msg, 'time') VALUES ('%s', '%s', '%s');" % (msg.from_user.full_name, msg.text, str(dt.datetime.now())))
     cur.close()
     conn.commit()
     await msg.answer("Твоя записочка сохранена, я увижу её когда загляну сюда 😉")

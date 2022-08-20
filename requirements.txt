@@ -15,5 +15,4 @@ psycopg2-binary==2.9.3
 pytz==2022.1
 requests==2.28.1
 urllib3==1.26.11
-yadisk==1.2.15
 yarl==1.7.2
