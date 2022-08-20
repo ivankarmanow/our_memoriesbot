@@ -246,9 +246,9 @@ async def take_letter_handler(msg: types.Message):
         keyb = types.InlineKeyboardMarkup().add(ikb("Предыдущие записки", callback_data="list_10"))
         await msg.answer("Нажми на кнопку если хочешь посмотреть предыдущие 10 записок", reply_markup=keyb)
     cur.close()
-    if msg.from_user.id == cp["Bot"]["POLINA_ID"]:
+    if msg.from_user.id == int(cp["Bot"]["POLINA_ID"]):
         cp.set("Bot", "POLINA_UNREAD", "False")
-    elif msg.from_user.id == cp["Bot"]["ME_ID"]:
+    elif msg.from_user.id == int(cp["Bot"]["ME_ID"]):
         cp.set("Bot", "ME_UNREAD", "False")
 
 @dp.callback_query_handler(Text(startswith="list"))
