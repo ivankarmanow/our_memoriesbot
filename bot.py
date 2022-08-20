@@ -241,7 +241,7 @@ async def take_letter_handler(msg: types.Message):
     if len(res) == 11:
         res = res[:-1]
     for i in res:
-        await msg.answer("От: %s\nКогда: %s\nЗаписка: %s" % (i[1], i[3]+dt.timedelta(hours=4), i[2]))
+        await msg.answer("От: %s\nКогда: %s\nЗаписка: %s" % (i[1], i[3], i[2]))
     if flag:
         keyb = types.InlineKeyboardMarkup().add(ikb("Предыдущие записки", callback_data="list_10"))
         await msg.answer("Нажми на кнопку если хочешь посмотреть предыдущие 10 записок", reply_markup=keyb)
@@ -270,7 +270,7 @@ async def take_more(clbck: types.CallbackQuery):
     if len(res) == 11:
         res = res[:-1]
     for i in res:
-        await clbck.message.answer("От: %s\nЗаписка: %s" % (i[1], i[2]))
+        await clbck.message.answer("От: %s\nКогда: %s\nЗаписка: %s" % (i[1], i[3], i[2]))
     if flag:
         keyb = types.InlineKeyboardMarkup().add(ikb("Предыдущие записки", callback_data="list_"+str(num)))
         await clbck.message.answer("Нажми на кнопку если хочешь посмотреть предыдущие 10 записок", reply_markup=keyb)
