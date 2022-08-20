@@ -27,9 +27,6 @@ logging.basicConfig(level=logging.INFO)
 
 conn = psycopg2.connect(user=cp["DB"]["user"], password=cp["DB"]["pwd"], host=cp["DB"]["host"], port=cp["DB"]["port"], database=cp["DB"]["db"])
 
-polina_unread = True
-me_unread = True
-
 class QuestState(StatesGroup):
     answer = State()
 
@@ -220,11 +217,13 @@ async def sending_letter(msg: types.Message, state: FSMContext):
     await msg.answer("Твоя записочка сохранена, я увижу её когда загляну сюда 😉")
     await state.finish()
     if msg.from_user.id == cp["Bot"]["POLINA_ID"]:
-        global me_unread
-        me_unread = True
+        cp.set("Bot", "ME_UNREAD", True)
+        with open("config.ini", "w") as file:
+            config.write(file)
     elif msg.from_user.id == cp["Bot"]["ME_ID"]:
-        global polina_unread
-        polina_unread = True
+        cp.set("Bot", "POLINA_UNREAD", True)
+        with open("config.ini", "w") as file:
+            config.write(file)
 
 num = 10
 
@@ -248,11 +247,9 @@ async def take_letter_handler(msg: types.Message):
         await msg.answer("Нажми на кнопку если хочешь посмотреть предыдущие 10 записок", reply_markup=keyb)
     cur.close()
     if msg.from_user.id == cp["Bot"]["POLINA_ID"]:
-        global polina_unread
-        polina_unread = False
+        cp.set("Bot", "POLINA_UNREAD", False)
     elif msg.from_user.id == cp["Bot"]["ME_ID"]:
-        global me_unread
-        me_unread = False
+        cp.set("Bot", "ME_UNREAD", False)
 
 @dp.callback_query_handler(Text(startswith="list"))
 async def take_more(clbck: types.CallbackQuery):
@@ -297,9 +294,9 @@ async def congrat_finish(msg: types.Message, state: FSMContext):
 
 async def notify():
     msg_text = "Загляни в записочки, кажется там есть кое-что для тебя 🙃"
-    if me_unread:
+    if cp['Bot']['ME_UNREAD']:
         await bot.send_message(cp["Bot"]["ME_ID"], msg_text)
-    if polina_unread:
+    if cp['Bot']['POLINA_UNREAD']:
         await bot.send_message(cp["Bot"]["POLINA_ID"], msg_text)
 
 async def happy_party():
