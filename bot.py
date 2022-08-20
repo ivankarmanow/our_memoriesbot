@@ -218,12 +218,12 @@ async def sending_letter(msg: types.Message, state: FSMContext):
     await state.finish()
     if msg.from_user.id == cp["Bot"]["POLINA_ID"]:
         cp.set("Bot", "ME_UNREAD", "True")
-        with open("config.ini", "w") as file:
-            config.write(file)
+        with open("config.ini", "w+") as file:
+            cp.write(file)
     elif msg.from_user.id == cp["Bot"]["ME_ID"]:
         cp.set("Bot", "POLINA_UNREAD", "True")
-        with open("config.ini", "w") as file:
-            config.write(file)
+        with open("config.ini", "w+") as file:
+            cp.write(file)
 
 num = 10
 
@@ -248,8 +248,13 @@ async def take_letter_handler(msg: types.Message):
     cur.close()
     if msg.from_user.id == int(cp["Bot"]["POLINA_ID"]):
         cp.set("Bot", "POLINA_UNREAD", "False")
+        with open("config.ini", "w+") as file:
+            cp.write(file)
     elif msg.from_user.id == int(cp["Bot"]["ME_ID"]):
+        print("Ivan readed messages")
         cp.set("Bot", "ME_UNREAD", "False")
+        with open("config.ini", "w+") as file:
+            cp.write(file)
 
 @dp.callback_query_handler(Text(startswith="list"))
 async def take_more(clbck: types.CallbackQuery):
