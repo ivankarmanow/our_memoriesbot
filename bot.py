@@ -309,6 +309,7 @@ async def congrat_finish(msg: types.Message, state: FSMContext):
     conn.commit()
     global new_congr
     new_congr = True
+    await state.finish()
 
 async def congratulate():
     global new_congr
