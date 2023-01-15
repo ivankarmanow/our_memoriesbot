@@ -337,15 +337,15 @@ async def notify():
     if cp.getboolean('Bot', 'POLINA_UNREAD'):
         await bot.send_message(cp["Bot"]["POLINA_ID"], msg_text)
 
-@dp.message_handler(commands=['sendstick'])
-async def send_sticker(msg: types.Message):
-    await msg.answer("❤️")
-
 async def happy_party():
+    if int(dt.datetime.now().strftime("%-d")) == 16:
+        await bot.send_message(cp["Bot"]["POLINA_ID"], f"Поздравляю, сегодня у тебя праздник - <b>День Рождения</b>! 🎉\nСегодня мы с тобой отмечаем твоё <i>девятнадцатилетие</i> 🎉🎉🎉\nС днём рождения, любимая ❤️❤️❤️")
+        await bot.send_message(cp['Bot']['POLINA_ID'], "😍")
+        await bot.send_message(cp['Bot']['POLINA_ID'], "🥰")
+        await bot.send_message(cp['Bot']['POLINA_ID'], "😘")
+        await bot.send_message(cp['Bot']['POLINA_ID'], "❤️")
+        return
     for i in parties:
-        if int(dt.datetime.now().strftime("%-d")) == 16:
-            await bot.send_message(cp["Bot"]["POLINA_ID"], f"Поздравляю, сегодня у тебя праздник - <b>День Рождения</b>! 🎉\nСегодня мы с тобой отмечаем твоё <i>девятнадцатилетие</i> 🎉🎉🎉\nС днём рождения, любимая ❤️❤️❤️")
-            
         if int(dt.datetime.now().strftime("%-d")) == i[0]:
             if len(i) == 2:
                 n = (int(dt.datetime.now().strftime("%Y")) - 2022) * 12 + (int(dt.datetime.now().strftime("%-m")) - i[1][0])
