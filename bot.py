@@ -339,7 +339,7 @@ async def notify():
 
 @dp.message_handler(commands=['sendstick'])
 async def send_sticker(msg: types.Message):
-    await msg.answer_sticker("❤️")
+    await msg.answer("❤️")
 
 async def happy_party():
     for i in parties:
