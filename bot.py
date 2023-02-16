@@ -338,13 +338,6 @@ async def notify():
         await bot.send_message(cp["Bot"]["POLINA_ID"], msg_text)
 
 async def happy_party():
-    if int(dt.datetime.now().strftime("%-d")) == 16:
-        await bot.send_message(cp["Bot"]["POLINA_ID"], f"Поздравляю, сегодня у тебя праздник - <b>День Рождения</b>! 🎉\nСегодня мы с тобой отмечаем твоё <i>девятнадцатилетие</i> 🎉🎉🎉\nС днём рождения, любимая ❤️❤️❤️")
-        await bot.send_message(cp['Bot']['POLINA_ID'], "😍")
-        await bot.send_message(cp['Bot']['POLINA_ID'], "🥰")
-        await bot.send_message(cp['Bot']['POLINA_ID'], "😘")
-        await bot.send_message(cp['Bot']['POLINA_ID'], "❤️")
-        return
     for i in parties:
         if int(dt.datetime.now().strftime("%-d")) == i[0]:
             if len(i) == 2:
